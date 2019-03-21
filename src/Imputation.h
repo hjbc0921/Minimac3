@@ -7,10 +7,10 @@
 #include "MemoryAllocators.h"
 #include "MarkovModel.h"
 #include "MarkovParameters.h"
-#include <ctime>
 #include "Unique.h"
 #include <cstdio>
 #include <cmath>
+
 
 
 #ifdef _OPENMP

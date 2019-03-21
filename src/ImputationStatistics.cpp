@@ -61,6 +61,7 @@ double ImputationStatistics::Rsq(int marker)
    return ovar / (evar + 1e-30);
    }
 
+
 double ImputationStatistics::LooRsq(int marker)
    {
     if (looCount[marker] < 2)

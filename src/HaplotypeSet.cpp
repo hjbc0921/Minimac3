@@ -10,6 +10,7 @@ void printErr(String filename)
     abort();
 }
 
+
 void HaplotypeSet::CreateSummary()
 {
     CalculateFreq();

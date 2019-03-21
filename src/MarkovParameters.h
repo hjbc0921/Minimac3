@@ -1,7 +1,6 @@
 #ifndef __MARKOVPARAMETERS_H__
 #define __MARKOVPARAMETERS_H__
 
-
 #include "InputFile.h"
 #include <cstdio>
 #include <cmath>

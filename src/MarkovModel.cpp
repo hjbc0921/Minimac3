@@ -193,14 +193,16 @@ void MarkovModel::ReCreateBothLeftProb(HaplotypeSet &tHap, int &hapID,
     int &End=Info.endIndex;
 
     noReducedStatesCurrent=Info.RepSize;
-
+    time_t tt = 0;
     for (int markerPos=Start+1; markerPos<=End; markerPos++)
     {
         ThisBlockLeftNoRecoProb[markerPos-Start]=ThisBlockLeftNoRecoProb[markerPos-Start-1];
+        time_t t0 = time(NULL);
         Transpose(Leftprob[markerPos-Start-1],
                   Leftprob[markerPos-Start],ThisBlockLeftNoRecoProb[markerPos-Start],
                   Recom[markerPos-1],Info.uniqueCardinality);
-
+        time_t t1 = time(NULL);
+        tt += (t1-t0);
         if (!missing[markerPos] && !tHap.getMissingScaffoldedHaplotype(hapID,markerPos))
         {
 
@@ -215,7 +217,7 @@ void MarkovModel::ReCreateBothLeftProb(HaplotypeSet &tHap, int &hapID,
         }
 
     }
-
+    cout << "############ Transpose in ReCreateBothLeftProb " << tt << " s ################" << endl;
 }
 
 
@@ -263,7 +265,7 @@ void MarkovModel::CountExpected(HaplotypeSet &tHap,int hapID,int group,
     else
         empError[End]+=Error[End];
 
-
+    time_t tt = 0;
     for (int markerPos=End-1; markerPos>Start; markerPos--)
     {
         if (!missing[markerPos+1] && !tHap.getMissingScaffoldedHaplotype(hapID,markerPos+1))
@@ -280,9 +282,10 @@ void MarkovModel::CountExpected(HaplotypeSet &tHap,int hapID,int group,
         empRecom[markerPos]+=CountRecombinants(Leftprob[markerPos-Start],CurrentRightProb,probHap,
                                                Recom[markerPos]
                                                ,PrecisionJump[markerPos+1]);
-
+        time_t t0 = time(NULL);
         Transpose(tempRightProb,CurrentRightProb,CurrentNoRecoRightProb,Recom[markerPos],Info.uniqueCardinality);
-
+        time_t t1 = time(NULL);
+        tt += (t1-t0);
         CreatePosteriorProb(Leftprob[markerPos-Start],CurrentRightProb,
                             leftNoRecomProb[markerPos-Start],CurrentNoRecoRightProb,
                             Leftprob[0],PrevRightFoldedProb,Constants,probHap,Info);
@@ -311,7 +314,10 @@ void MarkovModel::CountExpected(HaplotypeSet &tHap,int hapID,int group,
 
     tempRightProb=CurrentRightProb;
     empRecom[Start]+=CountRecombinants(Leftprob[0],CurrentRightProb,probHap,Recom[Start],PrecisionJump[Start+1]);
+    time_t t0 = time(NULL);
     Transpose(tempRightProb,CurrentRightProb,CurrentNoRecoRightProb,Recom[Start],Info.uniqueCardinality);
+    time_t t1 = time(NULL);
+    tt += (t1-t0);
 
     if(Start==0)
         {
@@ -329,6 +335,7 @@ void MarkovModel::CountExpected(HaplotypeSet &tHap,int hapID,int group,
                 empError[Start]+=Error[Start];
 
         }
+    cout << "############ Transpose in CountExpected " << tt << " s ################" << endl;
 }
 
 
@@ -367,7 +374,7 @@ void MarkovModel::Impute(HaplotypeSet &tHap,int hapID,int group,
     Impute(end,tHap.getScaffoldedHaplotype(hapID,end),tHap.getMissingScaffoldedHaplotype(hapID,end),Leftprob[end-start],
            CurrentRightProb,leftNoRecomProb[end-start],CurrentNoRecoRightProb,Leftprob[0],
                PrevRightFoldedProb,Constants,Info,alleleFreq);
-
+    time_t tt = 0;
     for (int markerPos=end-1; markerPos>start; markerPos--)
     {
 
@@ -383,8 +390,11 @@ void MarkovModel::Impute(HaplotypeSet &tHap,int hapID,int group,
 
 
         tempRightProb=CurrentRightProb;
+         time_t t0 = time(NULL);
         Transpose(tempRightProb,CurrentRightProb,CurrentNoRecoRightProb,Recom[markerPos],
                             Info.uniqueCardinality);
+        time_t t1 = time(NULL);
+        tt += (t1-t0);
         Impute(markerPos,tHap.getScaffoldedHaplotype(hapID,markerPos),tHap.getMissingScaffoldedHaplotype(hapID,markerPos),
                Leftprob[markerPos-start],CurrentRightProb,leftNoRecomProb[markerPos-start],
                    CurrentNoRecoRightProb,Leftprob[0],PrevRightFoldedProb,Constants,Info,alleleFreq);
@@ -401,14 +411,17 @@ void MarkovModel::Impute(HaplotypeSet &tHap,int hapID,int group,
         }
 
     tempRightProb=CurrentRightProb;
+    time_t t0 = time(NULL);
     Transpose(tempRightProb,CurrentRightProb,CurrentNoRecoRightProb,Recom[start],Info.uniqueCardinality);
-
+    time_t t1 = time(NULL);
+    tt += (t1-t0);
 
     if(start==0)
         Impute(start,tHap.getScaffoldedHaplotype(hapID,start),tHap.getMissingScaffoldedHaplotype(hapID,start),Leftprob[0],
                CurrentRightProb,leftNoRecomProb[0],
                        CurrentNoRecoRightProb,Leftprob[0],PrevRightFoldedProb,Constants,Info,alleleFreq);
 
+    cout << "############ Transpose in Impute " << tt << " s ################" << endl;
 }
 
 
@@ -599,14 +612,16 @@ void MarkovModel::WalkLeft(HaplotypeSet &tHap, int &hapID,
     int &End=Info.endIndex;
 
     noReducedStatesCurrent=Info.RepSize;
+    time_t tt = 0;
 
     for (int markerPos=Start+1; markerPos<=End; markerPos++)
     {
-
+        time_t t0 = time(NULL);
         PrecisionJump[markerPos]=Transpose(Leftprob[markerPos-Start-1],
                   Leftprob[markerPos-Start],CurrentLeftNoRecoProb,
                   Recom[markerPos-1],Info.uniqueCardinality);
-
+        time_t t1 = time(NULL);
+        tt += (t1-t0);
         if (!missing[markerPos] && !tHap.getMissingScaffoldedHaplotype(hapID,markerPos))
         {
            if(!tHap.getMissingScaffoldedHaplotype(hapID,markerPos))
@@ -618,6 +633,7 @@ void MarkovModel::WalkLeft(HaplotypeSet &tHap, int &hapID,
                           alleleFreq[markerPos] : 1-alleleFreq[markerPos],Info);
         }
     }
+    cout << "############ Transpose in WalkLeft " << tt << " s ################" << endl;
 }
 
 
@@ -647,7 +663,6 @@ void MarkovModel::Condition(int markerPos,vector<float> &Prob,
         }
     }
 }
-
 
 
 

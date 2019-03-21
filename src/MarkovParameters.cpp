@@ -108,7 +108,6 @@ void MarkovParameters::CopyParameters(MarkovParameters & rhs)
     empRecom.resize(noMarker-1,0.0);
 
 
-
 }
 
 

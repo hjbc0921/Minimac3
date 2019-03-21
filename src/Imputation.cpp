@@ -182,6 +182,7 @@ MarkovParameters* Imputation::createEstimates(HaplotypeSet &rHap,HaplotypeSet &t
         cout<<endl;
         }
 
+    
     double LogLikelihoodValue=0.0;
     for (int round = 0; round < EstimationRounds; round++)
     {

@@ -7,10 +7,9 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-
+#include <ctime>
 
 using namespace std;
-
 
 
 class HaplotypeSet

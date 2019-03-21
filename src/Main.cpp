@@ -538,7 +538,6 @@ int main(int argc, char ** argv)
     }
 
 
-
     if(!processReference)
 	{
 	    Imputation thisDataFast(target, reference, outfile, errFile, recFile, phased
