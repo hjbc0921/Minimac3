@@ -12,7 +12,7 @@
 #include "Unique.h"
 #include "ImputationStatistics.h"
 
-
+extern time_t transposeTime;
 
 class MarkovModel : public MarkovParameters
 {

@@ -19,8 +19,6 @@
 using namespace std;
 
 
-
-
 class Imputation
     {
         public:

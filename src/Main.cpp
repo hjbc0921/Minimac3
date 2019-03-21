@@ -22,10 +22,12 @@ using namespace std;
 void Minimac3Version();
 void helpFile();
 
+time_t transposeTime;
+
 int main(int argc, char ** argv)
 {
 	// Parameter Options
-
+    transposeTime = 0;
     String refHaps = "";
 	String haps = "", snps = "",removeSam="";
 	String outfile = "Minimac3.Output";
@@ -569,7 +571,7 @@ int main(int argc, char ** argv)
 
     compStatus="Success";
     PhoneHome::completionStatus(compStatus.c_str());
-
+    cout << "################ Transpose time : " << transposeTime << "s ################" << endl;
 	return 0;
 
 }

@@ -624,7 +624,6 @@ void Imputation::performImputation(HaplotypeSet &tHap,HaplotypeSet &rHap, String
 
     cout<<endl<<" Imputation Finished ... "<<endl;
 
-
     if (phased && !unphasedOutput)
     {
         ifclose(hapdose);
