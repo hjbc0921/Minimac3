@@ -55,6 +55,7 @@ PARENT_MAKE = Makefile.src
 include ../Makefile.inc
 .DEFAULT_GOAL := both
 
+mini: opt
 both: opt openmp
 all: opt openmp debug profile
 
