@@ -4,10 +4,12 @@ OPTFLAG_OPT = -O4
 OPTFLAG_DEBUG = -ggdb -O0 
 ########################
 # Specify your Files:
+# GPUBASE
+GPUBASE = MarkovModel
 # TOOLBASE - files with both .cpp and .h.  Just include the base name.
 # Example if you have Class1.cpp, Class1.h, Class2.cpp, and Class2.cpp, specify:
 # TOOLBASE = Class1 Class2
-TOOLBASE = HaplotypeSet Unique Imputation MarkovModel MarkovParameters ImputationStatistics
+TOOLBASE = HaplotypeSet Unique Imputation MarkovParameters ImputationStatistics
 # SRCONLY - .cpp only files.  Specify the entire name, including the .cpp.
 # Example, if you have Main.cpp, and File1.cpp, specify:
 # SRCONLY = Main.cpp File1.cpp

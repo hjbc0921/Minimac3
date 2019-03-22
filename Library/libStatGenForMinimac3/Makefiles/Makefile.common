@@ -1,5 +1,6 @@
 # This makefile is common for both Makefile.lib and Makefile.src
-TOOLBASE ?= 
+GPUBASE ?=
+TOOLBASE ?=
 COMPILE_ANY_CHANGE ?= 
 SRCONLY ?= 
 HDRONLY ?= 
@@ -12,8 +13,11 @@ include $(MAKEFILES_PATH)Makefile.include
 MAKE_DEPENDS=Makefile.depends
 
 # Source File Set
+GPUHDR = $(GPUBASE:=.h)
+GPUSRC = $(GPUBASE:=.cu)
 TOOLHDR = $(TOOLBASE:=.h) $(HDRONLY)
 TOOLSRC = $(TOOLBASE:=.cpp) $(SRCONLY)
+GPUOBJ = $(patsubst %.f,%.o,$(patsubst %.c,%.o,$(patsubst %.cu,%.o,$(GPUSRC))))
 TOOLOBJ = $(patsubst %.f,%.o,$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(TOOLSRC))))
 
 # Define the directory structure for opt/debug/profile for objs & bins
@@ -28,7 +32,7 @@ OBJDIR_DEBUG ?= $(OBJDIR)$(SUBDIR_DEBUG)
 OBJDIR_PROFILE ?= $(OBJDIR)$(SUBDIR_PROFILE)
 
 #Needed for cleaning up the library - need all three.
-OBJECTS_OPT := $(patsubst %,$(OBJDIR_OPT)/%,$(TOOLOBJ))
+OBJECTS_OPT := $(patsubst %,$(OBJDIR_OPT)/%,$(TOOLOBJ)) $(patsubst %,$(OBJDIR_OPT)/%,$(GPUOBJ))
 OBJECTS_DEBUG := $(patsubst %,$(OBJDIR_DEBUG)/%,$(TOOLOBJ))
 OBJECTS_PROFILE := $(patsubst %,$(OBJDIR_PROFILE)/%,$(TOOLOBJ))
 
@@ -41,6 +45,7 @@ ALWAYS_COMP_OBJ_PROFILE = $(patsubst %,$(OBJDIR_PROFILE)/%,$(COMPILE_ANY_CHANGE:
 
 CCOMPILE=$(CC) $(COMPFLAGS) -o $@ -c $*.c 
 CXXCOMPILE=$(CXX) $(COMPFLAGS) -o $@ -c $*.cpp -DVERSION="\"$(VERSION)\""
+GPUCOMPILE=nvcc -I../Library/libStatGenForMinimac3/include -I. -I ../ -o $@ -c $*.cu
 
 .PHONY: all test clean opt debug profile specific_clean
 
@@ -77,6 +82,8 @@ $(OBJDIR_DEBUG)/%.o: %.c
 $(OBJDIR_PROFILE)/%.o: %.c
 	$(CCOMPILE)
 
+$(OBJDIR_OPT)/%.o: %.cu
+	$(GPUCOMPILE)
 $(OBJDIR_OPT)/%.o: %.cpp 
 	$(CXXCOMPILE)
 $(OBJDIR_DEBUG)/%.o: %.cpp 
