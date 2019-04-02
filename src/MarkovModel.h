@@ -13,6 +13,10 @@
 #include "ImputationStatistics.h"
 
 extern time_t transposeTime;
+extern time_t gpuMallocTime;
+extern time_t memcpyTime;
+extern time_t functionTime;
+extern time_t wrapupTime;
 
 class MarkovModel : public MarkovParameters
 {

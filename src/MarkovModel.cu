@@ -616,14 +616,12 @@ void MarkovModel::WalkLeft(HaplotypeSet &tHap, int &hapID,
     noReducedStatesCurrent=Info.RepSize;
     for (int markerPos=Start+1; markerPos<=End; markerPos++)
     {
-        cout << Leftprob[markerPos-Start][0] << endl;
         time_t t0 = time(NULL);
         PrecisionJump[markerPos]=Transpose(Leftprob[markerPos-Start-1],
                   Leftprob[markerPos-Start],CurrentLeftNoRecoProb,
                   Recom[markerPos-1],Info.uniqueCardinality);
         time_t t1 = time(NULL);
         transposeTime += (t1-t0);
-        cout << Leftprob[markerPos-Start][0] << endl;
         if (!missing[markerPos] && !tHap.getMissingScaffoldedHaplotype(hapID,markerPos))
         {
            if(!tHap.getMissingScaffoldedHaplotype(hapID,markerPos))
@@ -700,7 +698,7 @@ bool MarkovModel::Transpose(vector<float> &from,
     }
 
     // GPU
-
+    time_t t0 = time(NULL);
     int size1 = noReducedStatesCurrent * sizeof(float);
     int size2 = noReducedStatesCurrent * sizeof(int);
     float *d_from, *d_to;
@@ -718,6 +716,8 @@ bool MarkovModel::Transpose(vector<float> &from,
     cudaMalloc((void **)&d_sum, sizeof(double));
     cudaMalloc((void **)&d_complement, sizeof(double));
 
+    time_t t1 = time(NULL);
+    gpuMallocTime += (t1-t0);
     cudaMemcpy(d_from, t_from, size1, cudaMemcpyHostToDevice);
     cudaMemcpy(d_to, t_to, size1, cudaMemcpyHostToDevice);
     cudaMemcpy(d_noReduced, &noReducedStatesCurrent, sizeof(int), cudaMemcpyHostToDevice);
@@ -725,7 +725,12 @@ bool MarkovModel::Transpose(vector<float> &from,
     cudaMemcpy(d_sum, &sum, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(d_complement, &complement, sizeof(double), cudaMemcpyHostToDevice);
 
+    t0 = time(NULL);
+    memcpyTime += (t0-t1);
+
     from_to<<<(noReducedStatesCurrent + ThreadsPerBlock - 1)/ThreadsPerBlock, ThreadsPerBlock>>>(d_from, d_to, d_noReduced, d_unique, d_sum, d_complement);
+    t1 = time(NULL);
+    functionTime += (t1-t0);
 
     cudaMemcpy(t_to, d_to, size1, cudaMemcpyDeviceToHost);
 
@@ -735,7 +740,8 @@ bool MarkovModel::Transpose(vector<float> &from,
     cudaFree(d_unique);
     cudaFree(d_sum);
     cudaFree(d_complement);
-
+    t0 = time(NULL);
+    wrapupTime += (t0-t1);
     return tempPrecisionJumpFlag;
 
 
