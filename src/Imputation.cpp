@@ -345,7 +345,7 @@ MarkovParameters* Imputation::createEstimates(HaplotypeSet &rHap,HaplotypeSet &t
     int time_load = time(0) - time_prev;
 
     cout << "\n Time taken for parameter estimation = " << time_load << " seconds. "<<endl;
-
+    cout << "transpose : " << transposeTime << endl;
 
     if(rHap.vcfType || EstimationRounds>0)
     {
