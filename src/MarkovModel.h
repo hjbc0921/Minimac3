@@ -13,6 +13,7 @@
 #include "ImputationStatistics.h"
 
 extern time_t transposeTime;
+extern int callNumber;
 
 class MarkovModel : public MarkovParameters
 {

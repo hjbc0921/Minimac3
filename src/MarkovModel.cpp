@@ -201,7 +201,11 @@ void MarkovModel::ReCreateBothLeftProb(HaplotypeSet &tHap, int &hapID,
                   Leftprob[markerPos-Start],ThisBlockLeftNoRecoProb[markerPos-Start],
                   Recom[markerPos-1],Info.uniqueCardinality);
         time_t t1 = time(NULL);
-        transposeTime += (t1-t0);
+
+		#pragma omp master
+        {transposeTime += (t1-t0);};
+
+
         if (!missing[markerPos] && !tHap.getMissingScaffoldedHaplotype(hapID,markerPos))
         {
 
@@ -282,7 +286,8 @@ void MarkovModel::CountExpected(HaplotypeSet &tHap,int hapID,int group,
         time_t t0 = time(NULL);
         Transpose(tempRightProb,CurrentRightProb,CurrentNoRecoRightProb,Recom[markerPos],Info.uniqueCardinality);
         time_t t1 = time(NULL);
-        transposeTime += (t1-t0);
+        #pragma omp master
+        {transposeTime += (t1-t0);};
         CreatePosteriorProb(Leftprob[markerPos-Start],CurrentRightProb,
                             leftNoRecomProb[markerPos-Start],CurrentNoRecoRightProb,
                             Leftprob[0],PrevRightFoldedProb,Constants,probHap,Info);
@@ -314,7 +319,8 @@ void MarkovModel::CountExpected(HaplotypeSet &tHap,int hapID,int group,
     time_t t0 = time(NULL);
     Transpose(tempRightProb,CurrentRightProb,CurrentNoRecoRightProb,Recom[Start],Info.uniqueCardinality);
     time_t t1 = time(NULL);
-    transposeTime += (t1-t0);
+    #pragma omp master
+    {transposeTime += (t1-t0);};
 
     if(Start==0)
         {
@@ -389,7 +395,8 @@ void MarkovModel::Impute(HaplotypeSet &tHap,int hapID,int group,
         Transpose(tempRightProb,CurrentRightProb,CurrentNoRecoRightProb,Recom[markerPos],
                             Info.uniqueCardinality);
         time_t t1 = time(NULL);
-        transposeTime += (t1-t0);
+        #pragma omp master
+        {transposeTime += (t1-t0);};
         Impute(markerPos,tHap.getScaffoldedHaplotype(hapID,markerPos),tHap.getMissingScaffoldedHaplotype(hapID,markerPos),
                Leftprob[markerPos-start],CurrentRightProb,leftNoRecomProb[markerPos-start],
                    CurrentNoRecoRightProb,Leftprob[0],PrevRightFoldedProb,Constants,Info,alleleFreq);
@@ -409,7 +416,8 @@ void MarkovModel::Impute(HaplotypeSet &tHap,int hapID,int group,
     time_t t0 = time(NULL);
     Transpose(tempRightProb,CurrentRightProb,CurrentNoRecoRightProb,Recom[start],Info.uniqueCardinality);
     time_t t1 = time(NULL);
-    transposeTime += (t1-t0);
+    #pragma omp master
+    {transposeTime += (t1-t0);};
 
     if(start==0)
         Impute(start,tHap.getScaffoldedHaplotype(hapID,start),tHap.getMissingScaffoldedHaplotype(hapID,start),Leftprob[0],
@@ -614,7 +622,10 @@ void MarkovModel::WalkLeft(HaplotypeSet &tHap, int &hapID,
                   Leftprob[markerPos-Start],CurrentLeftNoRecoProb,
                   Recom[markerPos-1],Info.uniqueCardinality);
         time_t t1 = time(NULL);
-        transposeTime += (t1-t0);
+
+        #pragma omp master
+        {transposeTime += (t1-t0);};
+
         if (!missing[markerPos] && !tHap.getMissingScaffoldedHaplotype(hapID,markerPos))
         {
            if(!tHap.getMissingScaffoldedHaplotype(hapID,markerPos))
@@ -662,6 +673,7 @@ bool MarkovModel::Transpose(vector<float> &from,
                             vector<float> &to, vector<float> &noRecomProb,
                             double reco,vector<int> &uniqueCardinality)
 {
+    callNumber++;
     bool tempPrecisionJumpFlag=false;
     if (reco == 0)
     {
